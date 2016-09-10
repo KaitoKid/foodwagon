@@ -1,0 +1,24 @@
+{
+  "name": "foodwagon",
+  "version": "1.0.0",
+  "description": "Simple meal bandwagons",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.14.0",
+    "node-flint": "^4.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KaitoKid/foodwagon.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KaitoKid/foodwagon/issues"
+  },
+  "homepage": "https://github.com/KaitoKid/foodwagon#readme"
+}
