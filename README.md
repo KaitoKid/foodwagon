@@ -5,7 +5,7 @@ Want to try a new place but you aren't sure who's interested?
 
 Simply create a FoodWagon in the channel and see who bandwagons along! You can even request a minimum number of people to come along for an event to happen (Such as a 5-person buffet). 
 
-### No More Clutter
+### No more clutter
 Stop sorting through tons of spam in a `#food` channel. See all the upcoming plans and easy pick which you want to join. 
 
 Nobody knows where to go? Grab a random restaurant from the suggestions!
