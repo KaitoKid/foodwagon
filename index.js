@@ -104,6 +104,7 @@ flint.hears('/help', function(bot, trigger) {
     bot.say(message);
 });
 
+// add restaurant to suggestions list
 flint.hears('/add', function(bot, trigger) {
     var keywords = trigger.text.split(" ");
     if (keywords.length < 3) {
@@ -120,11 +121,12 @@ flint.hears('/add', function(bot, trigger) {
     }
 });
 
+// view list of suggestions
 flint.hears('/list', function(bot, trigger) {
     bot.say(listRestaurants());
 });
 
-
+// make a foodwagon
 flint.hears('/food', function(bot, trigger) {
     console.log('/food');
     var keywords = trigger.text.split(" ");
@@ -158,6 +160,7 @@ flint.hears('/food', function(bot, trigger) {
     
 });
 
+// join a foodwagon
 flint.hears('/join', function(bot, trigger) {
     var keywords = trigger.text.split(" ");
     if (!isInt(keywords[2])) {
@@ -181,6 +184,7 @@ flint.hears('/join', function(bot, trigger) {
     }
 });
 
+// upcoming outings
 flint.hears('/wagons', function(bot, trigger) {
     console.log('wagons');
     if (wagons.length <= 1) {
@@ -195,6 +199,7 @@ flint.hears('/wagons', function(bot, trigger) {
     bot.say(message);
 });
 
+// delete all wagons
 flint.hears('/purge', function(bot, trigger) {
     console.log('purge');
     wagons = [];
