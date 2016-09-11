@@ -53,9 +53,8 @@ function findWagon(wagonId) {
     return wagons[wagonId];
 }
 
-
 var restaurants = [];
-restaurants.push('McDonalds');
+restaurants.push('McDonald\'s');
 
 function pickRandRestaurant() {
     var restaurant = restaurants[Math.floor(Math.random() * restaurants.length)];
@@ -201,7 +200,7 @@ flint.hears('/purge', function(bot, trigger) {
     wagons = [];
     wagonId = 1;
     restaurants = [];
-    restaurants.push('McDonalds');
+    restaurants.push('McDonald\'s');
     bot.say('All restaurants and wagons purged.');
 });
 
