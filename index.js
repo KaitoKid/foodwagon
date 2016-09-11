@@ -31,6 +31,7 @@ function findWagon(wagonId) {
 
 var restaurants = [];
 restaurants.push('McDonalds');
+
 function pickRandRestaurant() {
     var restaurant = restaurants[Math.floor(Math.random() * restaurants.length)];
     return restaurant;
@@ -39,6 +40,12 @@ function pickRandRestaurant() {
 function listRestaurants(){
     var currentList = "The current list of restaurants are the following: ";
     return currentList + restaurants.join(", ");
+}
+
+function addRestaurant(restaurant) {
+    if (restaurants.indexOf(restaurant) < 0) {
+        restaurants.push(restaurant);
+    }
 }
 
 
@@ -61,11 +68,11 @@ flint.hears('/hello', function(bot, trigger) {
 });
 
 
-var Wagon = function (time, minPeople, owner) {
+var Wagon = function (time, minPeople, restaurant, owner) {
     this.time = time;
     this.minPeople = minPeople;
     this.numPeople = 0;
-    this.restaurant = pickRandRestaurant();
+    this.restaurant = restaurant;
     this.id = getId();
 
     this.people = [];
@@ -99,19 +106,31 @@ flint.hears('/list', function(bot, trigger) {
 flint.hears('/food', function(bot, trigger) {
     console.log('\/food');
     var keywords = trigger.text.split(" ");
-    if (keywords.length != 4) {
+    if (keywords.length < 4) {
         console.log('error');
         bot.say('Invalid arguments. Please make sure the command is in the form \"\/food <time> <number of people>\"');
         return;
-    } 
+    }
     var time = keywords[2];
     var numPeople = parseInt(keywords[3]);
 
-    var wagon = new Wagon(time, numPeople, trigger.personDisplayName);
-    wagons[wagon.id] = wagon;
-
-    bot.say('How about %s for lunch at %s? Looking for %s people.', wagon.restaurant, wagon.time, wagon.minPeople - 1);
+    console.log('a');
+    var wagon;
+    if (keywords.length == 4) {
+        console.log('b');
+        wagon = new Wagon(time, numPeople, pickRandRestaurant(), trigger.personDisplayName);
+    } else {
+        console.log('c');
+        var restaurant = keywords.slice(4).join(" ");
+        console.log('d');
+        addRestaurant(restaurant);
+        console.log('e');
+        wagon = new Wagon(time, numPeople, restaurant, trigger.personDisplayName);
+    }
+    bot.say('How about %s for food at %s? Looking for %s people.', wagon.restaurant, wagon.time, wagon.minPeople - 1);
     bot.say('Enter the command \"\/join %s\" to join this Foodwagon', wagon.id);
+    
+    wagons[wagon.id] = wagon;
     
     console.log(wagons);
 });
