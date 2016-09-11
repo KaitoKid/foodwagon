@@ -18,7 +18,13 @@ function pickRandRestaurant() {
     return restaurant;
 }
 
-
+function listrestaurants(){
+  var i = 1;
+  var currentList = "The current list of restaurants are the following: "
+  while (i <= restaurants.length){
+    currentList = currentList + '\n' + i.toString() + "." + restaurants[i - 1];
+  }
+}
 // flint options
 var config = {
     webhookUrl: 'http://b8f93335.ngrok.io/flint',
@@ -45,7 +51,7 @@ var Wagon = function (time, minPeople) {
     this.minPeople = minPeople;
     this.numPeople = 1;
     this.restaurant = pickRandRestaurant();
-    
+
     this.id = getId();
 
     /*this.addPerson = function(name) {
@@ -72,7 +78,7 @@ flint.hears('/food', function(bot, trigger) {
         console.log('error');
         bot.say('Invalid arguments. Please make sure the command is in the form \"\/food <time> <number of people>\"');
         return;
-    } 
+    }
     var time = keywords[2];
     var numPeople = keywords[3];
     // TODO validation, convert time properly
@@ -82,7 +88,7 @@ flint.hears('/food', function(bot, trigger) {
 
     bot.say('How about %s for lunch at %s? Looking for %s people.', wagon.restaurant, wagon.time, wagon.minPeople);
     bot.say('Enter the command \"\/join %s\" to join this Foodwagon', wagon.id);
-    
+
     console.log(wagons);
 });
 
