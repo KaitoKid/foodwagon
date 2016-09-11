@@ -10,6 +10,31 @@ function isInt(value) {
            !isNaN(parseInt(value, 10));
 }
 
+var Wagon = function (time, minPeople, restaurant, owner) {
+    this.time = time;
+    this.minPeople = minPeople;
+    this.numPeople = 0;
+    this.restaurant = restaurant;
+    this.id = getId();
+    this.people = [];
+
+    this.addPerson = function(name) {
+        if (this.people.indexOf(name) < 0) {
+            console.log("add " + name);
+            this.numPeople++;
+            console.log('a');
+            this.people.push(name);
+            console.log("a " + this.numPeople + " " +  this.minPeople);
+            return true;
+        }
+        return false;
+    };
+
+    this.addPerson(owner);
+
+    console.log("create wagon " + this.time + " " + this.minPeople + " " + this.restaurant);
+};
+
 var wagons = [];
 var wagonId = 1;
 
@@ -52,7 +77,7 @@ function addRestaurant(restaurant) {
 // flint options
 var config = {
     webhookUrl: 'http://b8f93335.ngrok.io/flint',
-    token: 'NjExNDJlYWItZTllNC00MDMyLWE0YjItNDk3ZjBjZTcxODlkOWQ2MDVkZTItZDE3',
+    token: 'MDRjNTc0OWYtNTFjNS00NGQwLWIwY2YtZTBlZjVhOGFjMDJhOWIwNWRkZWYtNTdj',
     port: 80
 };
 
@@ -64,38 +89,36 @@ console.log('Started')
 // say hello
 flint.hears('/hello', function(bot, trigger) {
     console.log("hello");
-    bot.say('Hello %s!', trigger.personDisplayName);
+    bot.say('Hello %s! Please type \"/help\" for help.', trigger.personDisplayName);
 });
 
-
-var Wagon = function (time, minPeople, restaurant, owner) {
-    this.time = time;
-    this.minPeople = minPeople;
-    this.numPeople = 0;
-    this.restaurant = restaurant;
-    this.id = getId();
-
-    this.people = [];
-
-    this.addPerson = function(name) {
-        console.log("add " + name);
-        this.numPeople++;
-        console.log('a');
-        this.people.push(name);
-        console.log("a " + this.numPeople + " " +  this.minPeople);
-    };
-
-    this.addPerson(owner);
-
-    console.log("create wagon " + this.time + " " + this.minPeople + " " + this.restaurant);
-};
-
+flint.hears('/help', function(bot, trigger) {
+    console.log('help');
+    var message =
+        '/add <restaurant>\t\t\tadd a restaurant to the list of restaurants\n' +
+        '/list\t\t\t\t\t\tlist out known restaurants\n' +
+        '/food <time> <# of people>\tcreate a wagon for a random restaurant\n' +
+        '/food <time> <# of people> <restaurant>\tcreate a wagon\n' +
+        '/join <wagonId>\t\t\tjump on a wagon\n' +
+        '/wagons\t\t\t\t\tlist out the current wagons\n' +
+        '/purge\t\t\t\t\tclear the list of restaurants and wagons\n';
+    bot.say(message);
+});
 
 flint.hears('/add', function(bot, trigger) {
-    var restaurant = trigger.text.substring(13);
+    var keywords = trigger.text.split(" ");
+    if (keywords.length < 3) {
+        bot.say('Invalid arguments. Please make sure the command is in the form \"/add <restaurant>\".');
+        return;
+    }
+    var restaurant = keywords.splice(2).join(" ");
     console.log(restaurant);
-    restaurants.push(restaurant);
-    bot.say('Added %s to the list of restaurants.', restaurant);
+    if (restaurants.indexOf(restaurant) < 0) {
+        restaurants.push(restaurant);
+        bot.say('Added %s to the list of restaurants.', restaurant);
+    } else {
+        bot.say('%s is already in the list of restaurants.', restaurant);
+    }
 });
 
 flint.hears('/list', function(bot, trigger) {
@@ -104,11 +127,11 @@ flint.hears('/list', function(bot, trigger) {
 
 
 flint.hears('/food', function(bot, trigger) {
-    console.log('\/food');
+    console.log('/food');
     var keywords = trigger.text.split(" ");
     if (keywords.length < 4) {
         console.log('error');
-        bot.say('Invalid arguments. Please make sure the command is in the form \"\/food <time> <number of people>\"');
+        bot.say('Invalid arguments. Please make sure the command is in the form \"/food <time> <number of people>\".');
         return;
     }
     var time = keywords[2];
@@ -127,12 +150,13 @@ flint.hears('/food', function(bot, trigger) {
         console.log('e');
         wagon = new Wagon(time, numPeople, restaurant, trigger.personDisplayName);
     }
-    bot.say('How about %s for food at %s? Looking for %s people.', wagon.restaurant, wagon.time, wagon.minPeople - 1);
-    bot.say('Enter the command \"\/join %s\" to join this Foodwagon', wagon.id);
+    console.log(wagon);
+    bot.say('How about %s for food at %s? Looking for %s people.\n' +
+            'Enter the command \"/join %s\" to join this FoodWagon.',
+            wagon.restaurant, wagon.time, wagon.minPeople - 1, wagon.id);
     
     wagons[wagon.id] = wagon;
     
-    console.log(wagons);
 });
 
 flint.hears('/join', function(bot, trigger) {
@@ -147,10 +171,11 @@ flint.hears('/join', function(bot, trigger) {
         return;
     }
     var wagon = findWagon(wagonId);
-    wagon.addPerson(trigger.personDisplayName);
-    //console.log(wagon.numPeople + " " + wagon.minPeople);
-    if (wagon.numPeople < wagon.minPeople) {
-        var required = wagon.minPeople - wagon.numPeople;
+    var added = wagon.addPerson(trigger.personDisplayName);
+    var required = wagon.minPeople - wagon.numPeople;
+    if (!added) {
+        bot.say('%s is already on the wagon to %s. Need %s more to join', trigger.personDisplayName, wagon.restaurant, required);
+    } else if (wagon.numPeople < wagon.minPeople) {
         bot.say('%s has joined the wagon to %s. Need %s more people to join', trigger.personDisplayName, wagon.restaurant, required);
     } else {
         bot.say('%s has joined the wagon to %s. All aboard!', trigger.personDisplayName, wagon.restaurant);
@@ -159,12 +184,25 @@ flint.hears('/join', function(bot, trigger) {
 
 flint.hears('/wagons', function(bot, trigger) {
     console.log('wagons');
+    if (wagons.length <= 1) {
+        bot.say('There currently no wagons.');
+        return;
+    }
     var message = "The current wagons are:";
     for (var i = 1; i < wagons.length; i++) {
         var wagon = wagons[i]
-        message = message + "\n" + wagon.restaurant + ": " + wagon.people.join(", ");
+        message = message + "\n" + wagon.id + ". " + wagon.restaurant + " at " + wagon.time + ": " + wagon.people.join(", ");
     }
     bot.say(message);
+});
+
+flint.hears('/purge', function(bot, trigger) {
+    console.log('purge');
+    wagons = [];
+    wagonId = 1;
+    restaurants = [];
+    restaurants.push('McDonalds');
+    bot.say('All restaurants and wagons purged.');
 });
 
 
