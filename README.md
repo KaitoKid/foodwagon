@@ -26,6 +26,4 @@ Purge | `/purge` | Clears all existing plans for a new day
 Made by @KaitoKid and @yjimmyy for TechCrunch Disrupt SF 2016 Hackathon for CISCO and .CLUB
 
 ### Deploy
-Add our server to your Cisco Spark channel just with FoodWagon@SparkBot.io
-
 Feel free to download and host your own Node.js server and WebHook!
