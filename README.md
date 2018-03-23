@@ -22,8 +22,5 @@ Upcoming | `/wagons` | See the list of FoodWagons currently planned
 Help | `/help` | Access the documentation 
 Purge | `/purge` | Clears all existing plans for a new day
 
-### Authors
-Made by @KaitoKid and @yjimmyy for TechCrunch Disrupt SF 2016 Hackathon for CISCO and .CLUB
-
 ### Deploy
 Feel free to download and host your own Node.js server and WebHook!
